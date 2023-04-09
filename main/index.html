@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dice Scorekeeper</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    background-color: #F5EFE7;
+    color: #3C3C3C;
+  }
+
+  .container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+
+  .keypad {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+
+  .keypad button,
+  .keypad input {
+    background-color: #D4C0A1;
+    border: 1px solid #B39D8D;
+    font-size: 20px;
+    text-align: center;
+    padding: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.2s ease; /* Add transition for smooth effect */
+  }
+
+  .keypad input {
+    grid-column: span 3;
+    cursor: text;
+  }
+
+  .keypad button:active {
+  background-color: #BAA28F;
+  transform: translateY(2px); /* Move the button down slightly when clicked */
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1); /* Add a subtle shadow */
+}
+
+  table {
+    border-collapse: collapse;
+    width: 100%;
+  }
+
+  th,
+  td {
+    border: 1px solid #B39D8D;
+    padding: 15px;
+    text-align: center;
+  }
+
+  th {
+    background-color: #9E8B79;
+    color: white;
+  }
+
+  .selected {
+    background-color: #E2D4C4;
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="keypad">
+    <input type="text" id="keypad-input" readonly>
+    <button onclick="appendNumber(1)">1</button>
+    <button onclick="appendNumber(2)">2</button>
+    <button onclick="appendNumber(3)">3</button>
+    <button onclick="appendNumber(4)">4</button>
+    <button onclick="appendNumber(5)">5</button>
+    <button onclick="appendNumber(6)">6</button>
+    <button onclick="appendNumber(7)">7</button>
+    <button onclick="appendNumber(8)">8</button>
+    <button onclick="appendNumber(9)">9</button>
+    <button onclick="backspace()">&larr;</button>
+    <button onclick="appendNumber(0)">0</button>
+    <button onclick="clearInput()">C</button>
+  </div>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Column 1</th>
+        <th>Column 2</th>
+        <th>Column 3</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td onclick="selectCell(this)"></td>
+        <td onclick="selectCell(this)"></td>
+        <td onclick="selectCell(this)"></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<script>
+  let input = document.getElementById("keypad-input");
+  let selectedCell = null;
+
+  function appendNumber(number) {
+    input.value += number;
+  }
+
+  function backspace() {
+    input.value = input.value.slice(0, -1);
+  }
+
+  function clearInput() {
+    input.value = "";
+  }
+
+  function selectCell(cell) {
+        if (selectedCell) {
+      selectedCell.classList.remove("selected");
+    }
+    selectedCell = cell;
+    selectedCell.classList.add("selected");
+  }
+
+  function submitValue() {
+  if (selectedCell) {
+    selectedCell.textContent = input.value;
+    const nextCell = selectedCell.nextElementSibling;
+    const currentRow = selectedCell.parentElement;
+
+    if (nextCell) {
+      selectCell(nextCell);
+    } else {
+      const newRow = currentRow.cloneNode(true);
+      newRow.querySelectorAll("td").forEach((cell) => {
+        cell.onclick = () => selectCell(cell);
+        cell.textContent = "";
+        cell.classList.remove("selected");
+      });
+
+      currentRow.insertAdjacentElement("beforebegin", newRow);
+      selectCell(newRow.firstElementChild);
+    }
+
+    clearInput();
+  }
+}
+
+  document.addEventListener("DOMContentLoaded", () => {
+    const submitButton = document.createElement("button");
+    submitButton.textContent = "Submit";
+    submitButton.style.gridColumn = "span 3";
+    submitButton.onclick = submitValue;
+    submitButton.classList.add("keypad-button");
+
+    const keypad = document.querySelector(".keypad");
+    keypad.appendChild(submitButton);
+  });
+</script>
+</body>
+</html>
+

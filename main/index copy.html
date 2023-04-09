@@ -1,3 +1,4 @@
+<!-- The HTML doctype declaration -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -5,74 +6,143 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Dice Scorekeeper</title>
 <style>
+  /* General styles for body */
   body {
     font-family: Arial, sans-serif;
     background-color: #F5EFE7;
     color: #3C3C3C;
   }
-
-  .container {
-    max-width: 800px;
-    margin: 0 auto;
-    padding: 20px;
-  }
-
-  .keypad {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 10px;
-    margin-bottom: 20px;
-  }
-
-  .keypad button,
-  .keypad input {
-    background-color: #D4C0A1;
-    border: 1px solid #B39D8D;
-    font-size: 20px;
-    text-align: center;
-    padding: 10px;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: all 0.2s ease; /* Add transition for smooth effect */
-  }
-
-  .keypad input {
-    grid-column: span 3;
-    cursor: text;
-  }
-
-  .keypad button:active {
-  background-color: #BAA28F;
-  transform: translateY(2px); /* Move the button down slightly when clicked */
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1); /* Add a subtle shadow */
+/* Container to center content */
+.container {
+max-width: 800px;
+margin: 0 auto;
+padding: 20px;
 }
 
-  table {
-    border-collapse: collapse;
-    width: 100%;
-  }
+/* Keypad layout and styling */
+.keypad {
+display: grid;
+grid-template-columns: repeat(3, 1fr);
+gap: 10px;
+margin-bottom: 20px;
+}
 
-  th,
-  td {
-    border: 1px solid #B39D8D;
-    padding: 15px;
-    text-align: center;
-  }
+/* Keypad button and input styles */
+.keypad button,
+.keypad input {
+background-color: #D4C0A1;
+border: 1px solid #B39D8D;
+font-size: 20px;
+text-align: center;
+padding: 10px;
+border-radius: 5px;
+cursor: pointer;
+transition: all 0.2s ease; /* Add transition for smooth effect */
+}
 
-  th {
-    background-color: #9E8B79;
-    color: white;
-  }
+/* Keypad input styling */
+.keypad input {
+grid-column: span 3;
+cursor: text;
+}
 
-  .selected {
-    background-color: #E2D4C4;
-  }
+/* Keypad button active state */
+.keypad button:active {
+background-color: #BAA28F;
+transform: translateY(2px); /* Move the button down slightly when clicked */
+box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1); /* Add a subtle shadow */
+}
+
+/* Table styling */
+table {
+border-collapse: collapse;
+width: 100%;
+}
+
+/* Table header and data cell styles */
+th,
+td {
+border: 1px solid #B39D8D;
+padding: 15px;
+text-align: center;
+}
+
+/* Table header styling */
+th {
+background-color: #9E8B79;
+color: white;
+}
+
+/* Selected cell styling */
+.selected {
+background-color: #E2D4C4;
+}
+
+#newGameButton, .custom-button {
+  background-color: #4CAF50;
+  color: white;
+  border: 1px solid darkgreen;
+  border-radius: 5px;
+  padding: 10px 20px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 20px 0;
+  cursor: pointer;
+  transition: all 0.2s ease; /* Add transition for smooth effect */
+}
+
+#newGameButton:active, .custom-button:active {
+
+    transform: translateY(2px); /* Move the button down slightly when clicked */
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1); /* Add a subtle shadow */
+    background-color: darkgreen;
+
+}
+.popup {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1000;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.popup form {
+  background-color: #F5EFE7;
+  padding: 20px;
+  border-radius: 5px;
+}
+
+.playerFieldsList>label {
+
+    display: block;
+    float: left;
+}
+
+.playerFieldsList>input {
+
+display: block;
+margin: 5px auto ;
+}
+
+.hidden {
+  display: none;
+}
 </style>
+
 </head>
 <body>
 <div class="container">
   <div class="keypad">
+    <!-- Keypad input field -->
     <input type="text" id="keypad-input" readonly>
+    <!-- Keypad buttons -->
     <button onclick="appendNumber(1)">1</button>
     <button onclick="appendNumber(2)">2</button>
     <button onclick="appendNumber(3)">3</button>
@@ -87,6 +157,20 @@
     <button onclick="clearInput()">C</button>
   </div>
 
+  <!-- Add the "New Game" button inside the container div -->
+<button class="custom-button" id="newGameButton" onclick="showNewGameForm()">New Game</button>
+
+<!-- Add the new game form with the popup style (initially hidden) -->
+<div id="newGameForm" class="popup hidden">
+  <form id="playerForm">
+    <label for="playerCount">How many players?</label>
+    <input type="number" id="playerCount" min="1" onchange="generatePlayerFields()" />
+    <div id="playerFields" class="playerFieldsList"></div>
+    <button type="button" onclick="submitNewGameForm()">Start Game</button>
+  </form>
+</div>
+
+  <!-- Table structure -->
   <table>
     <thead>
       <tr>
@@ -97,62 +181,127 @@
     </thead>
     <tbody>
       <tr>
+        <!-- Table data cells with onclick event to select the cell -->
         <td onclick="selectCell(this)"></td>
         <td onclick="selectCell(this)"></td>
         <td onclick="selectCell(this)"></td>
       </tr>
     </tbody>
-  </table>
+</table>
 </div>
-
 <script>
+
+
+function showNewGameForm() {
+  // Show the new game form and blur the main page
+  document.getElementById("newGameForm").classList.remove("hidden");
+  document.querySelector("body").style.filter = "blur(0px)";
+}
+
+function hideNewGameForm() {
+  // Hide the new game form and remove the blur from the main page
+  document.getElementById("newGameForm").classList.add("hidden");
+  document.querySelector("body").style.filter = "none";
+}
+
+function generatePlayerFields() {
+  const playerCount = document.getElementById("playerCount").value;
+  const playerFieldsContainer = document.getElementById("playerFields");
+
+  // Clear existing player fields
+  playerFieldsContainer.innerHTML = "";
+
+  // Generate new player fields based on the player count
+  for (let i = 1; i <= playerCount; i++) {
+    const label = document.createElement("label");
+    label.textContent = `Player ${i}:`;
+
+    const input = document.createElement("input");
+    input.type = "text";
+
+    playerFieldsContainer.appendChild(label);
+    playerFieldsContainer.appendChild(input);
+  }
+}
+
+function submitNewGameForm() {
+  // Process the new game form submission (e.g., create a new game with the entered player names)
+  // ...
+
+  // Close the new game form
+  hideNewGameForm();
+}
+
+
+  // Get the keypad input element
   let input = document.getElementById("keypad-input");
+  // Variable to store the currently selected cell
   let selectedCell = null;
 
+  // Function to append a number to the input field
   function appendNumber(number) {
     input.value += number;
   }
 
+  // Function to remove the last character from the input field
   function backspace() {
     input.value = input.value.slice(0, -1);
   }
 
+  // Function to clear the input field
   function clearInput() {
     input.value = "";
   }
 
+  // Function to select a table cell
   function selectCell(cell) {
-        if (selectedCell) {
+    // If a cell is already selected, remove the "selected" class
+    if (selectedCell) {
       selectedCell.classList.remove("selected");
     }
+    // Set the clicked cell as the new selected cell and add the "selected" class
     selectedCell = cell;
     selectedCell.classList.add("selected");
   }
 
+  // Function to submit the input value to the selected cell
   function submitValue() {
+  // If a cell is selected, update its text content with the input value
   if (selectedCell) {
     selectedCell.textContent = input.value;
+    // Get the next cell in the row, if any
     const nextCell = selectedCell.nextElementSibling;
+    // Get the current row
     const currentRow = selectedCell.parentElement;
 
+    // If there is a next cell, select it
     if (nextCell) {
       selectCell(nextCell);
     } else {
-      const newRow = currentRow.cloneNode(true);
-      newRow.querySelectorAll("td").forEach((cell) => {
-        cell.onclick = () => selectCell(cell);
-        cell.textContent = "";
-        cell.classList.remove("selected");
-      });
+      // Check if there are empty cells in the top content row
+      const topRowCells = currentRow.parentElement.children[0].querySelectorAll("td");
+      const hasEmptyCells = Array.from(topRowCells).some((cell) => cell.textContent === "");
 
-      currentRow.insertAdjacentElement("beforebegin", newRow);
-      selectCell(newRow.firstElementChild);
+      // If there are no empty cells in the top content row, create a new row and select the first cell in the new row
+      if (!hasEmptyCells) {
+        const newRow = currentRow.cloneNode(true);
+        newRow.querySelectorAll("td").forEach((cell) => {
+          cell.onclick = () => selectCell(cell);
+          cell.textContent = "";
+          cell.classList.remove("selected");
+        });
+
+        currentRow.insertAdjacentElement("beforebegin", newRow);
+        selectCell(newRow.firstElementChild);
+      }
     }
 
+    // Clear the input field
     clearInput();
   }
 }
 
+  // When the DOM is loaded, create and add the "Submit" button to the keypad
   document.addEventListener("DOMContentLoaded", () => {
     const submitButton = document.createElement("button");
     submitButton.textContent = "Submit";
@@ -163,7 +312,10 @@
     const keypad = document.querySelector(".keypad");
     keypad.appendChild(submitButton);
   });
+
+
+
+
 </script>
 </body>
 </html>
-

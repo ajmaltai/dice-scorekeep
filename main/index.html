@@ -77,6 +77,63 @@ color: white;
 .selected {
 background-color: #E2D4C4;
 }
+
+#newGameButton, .custom-button {
+  background-color: #4CAF50;
+  color: white;
+  border: 1px solid darkgreen;
+  border-radius: 5px;
+  padding: 10px 20px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 20px 0;
+  cursor: pointer;
+  transition: all 0.2s ease; /* Add transition for smooth effect */
+}
+
+#newGameButton:active, .custom-button:active {
+
+    transform: translateY(2px); /* Move the button down slightly when clicked */
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1); /* Add a subtle shadow */
+    background-color: darkgreen;
+
+}
+.popup {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1000;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.popup form {
+  background-color: #F5EFE7;
+  padding: 20px;
+  border-radius: 5px;
+}
+
+.playerFieldsList>label {
+
+    display: block;
+    float: left;
+}
+
+.playerFieldsList>input {
+
+display: block;
+margin: 5px auto ;
+}
+
+.hidden {
+  display: none;
+}
 </style>
 
 </head>
@@ -99,6 +156,20 @@ background-color: #E2D4C4;
     <button onclick="appendNumber(0)">0</button>
     <button onclick="clearInput()">C</button>
   </div>
+
+  <!-- Add the "New Game" button inside the container div -->
+<button class="custom-button" id="newGameButton" onclick="showNewGameForm()">New Game</button>
+
+<!-- Add the new game form with the popup style (initially hidden) -->
+<div id="newGameForm" class="popup hidden">
+  <form id="playerForm">
+    <label for="playerCount">How many players?</label>
+    <input type="number" id="playerCount" min="1" onchange="generatePlayerFields()" />
+    <div id="playerFields" class="playerFieldsList"></div>
+    <button type="button" onclick="submitNewGameForm()">Start Game</button>
+  </form>
+</div>
+
   <!-- Table structure -->
   <table>
     <thead>
@@ -119,6 +190,49 @@ background-color: #E2D4C4;
 </table>
 </div>
 <script>
+
+
+function showNewGameForm() {
+  // Show the new game form and blur the main page
+  document.getElementById("newGameForm").classList.remove("hidden");
+  document.querySelector("body").style.filter = "blur(0px)";
+}
+
+function hideNewGameForm() {
+  // Hide the new game form and remove the blur from the main page
+  document.getElementById("newGameForm").classList.add("hidden");
+  document.querySelector("body").style.filter = "none";
+}
+
+function generatePlayerFields() {
+  const playerCount = document.getElementById("playerCount").value;
+  const playerFieldsContainer = document.getElementById("playerFields");
+
+  // Clear existing player fields
+  playerFieldsContainer.innerHTML = "";
+
+  // Generate new player fields based on the player count
+  for (let i = 1; i <= playerCount; i++) {
+    const label = document.createElement("label");
+    label.textContent = `Player ${i}:`;
+
+    const input = document.createElement("input");
+    input.type = "text";
+
+    playerFieldsContainer.appendChild(label);
+    playerFieldsContainer.appendChild(input);
+  }
+}
+
+function submitNewGameForm() {
+  // Process the new game form submission (e.g., create a new game with the entered player names)
+  // ...
+
+  // Close the new game form
+  hideNewGameForm();
+}
+
+
   // Get the keypad input element
   let input = document.getElementById("keypad-input");
   // Variable to store the currently selected cell
@@ -198,6 +312,10 @@ background-color: #E2D4C4;
     const keypad = document.querySelector(".keypad");
     keypad.appendChild(submitButton);
   });
+
+
+
+
 </script>
 </body>
 </html>
